@@ -16,3 +16,13 @@ func TestTimestamp(t *testing.T) {
 		t.Errorf("Unexpected timestamp, got %s, expected %s\n", result, expected)
 	}
 }
+
+func TestTimestampWithDelimiter(t *testing.T) {
+	const longForm = "Jan 2, 2006 at 3:04pm (MST)"
+	aTime, _ := time.Parse(longForm, "Feb 3, 2013 at 7:54pm (PST)")
+	result := golib.TimestampWithDelimiter(aTime, "/")
+	expected := "2013/02/03/195400000PST"
+	if result != expected {
+		t.Errorf("Unexpected timestamp, got %s, expected %s\n", result, expected)
+	}
+}

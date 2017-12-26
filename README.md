@@ -14,7 +14,7 @@ A basic wrapper around AWS S3 SDK.
 
 ### timestamp
 
-Simple function to generate a timestamp string in a standart format.
+Set of functions to generate timestamp strings in a standart format.
 
 ## Howto
 
