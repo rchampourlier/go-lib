@@ -1,4 +1,4 @@
-package lib
+package golib
 
 // Install AWS Go SDK with `go get -u github.com/aws/aws-sdk-go`
 

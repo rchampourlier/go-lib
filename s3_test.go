@@ -1,4 +1,4 @@
-package lib_test
+package golib_test
 
 // This test does E2E testing and will connect and perform actions
 // on AWS S3. AWS credentials must be loaded in the environment.
@@ -9,15 +9,15 @@ import (
 	"os"
 	"testing"
 
-	"github.com/rchampourlier/lib"
+	"github.com/rchampourlier/golib"
 )
 
-func buildS3() lib.S3 {
+func buildS3() golib.S3 {
 	bucket := os.Getenv("AWS_BUCKET")
-	return lib.NewS3(bucket, "")
+	return golib.NewS3(bucket, "")
 }
 
-func countObjects(s3 lib.S3) (int, error) {
+func countObjects(s3 golib.S3) (int, error) {
 	objectKeys, err := s3.ListObjects()
 	if err != nil {
 		return -1, err
@@ -25,12 +25,12 @@ func countObjects(s3 lib.S3) (int, error) {
 	return len(objectKeys), nil
 }
 
-func createObject(s3 lib.S3) error {
+func createObject(s3 golib.S3) error {
 	err := s3.CreateObject("test_object", []byte("test_object content"))
 	return err
 }
 
-func deleteObject(s3 lib.S3) error {
+func deleteObject(s3 golib.S3) error {
 	err := s3.DeleteObject("test_object")
 	return err
 }

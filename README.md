@@ -4,9 +4,17 @@ A mini Go library for personal use.
 
 ## Components
 
+### parameterize
+
+Converts a string to snake-case.
+
 ### s3
 
 A basic wrapper around AWS S3 SDK.
+
+### timestamp
+
+Simple function to generate a timestamp string in a standart format.
 
 ## Howto
 
