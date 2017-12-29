@@ -72,7 +72,7 @@ func (s3 S3) ListObjects(prefix string) ([]string, error) {
 // ### Return values
 //
 //   - `*string`: a pointer to the found key (`nil` if not found)
-//   - `error`
+//   - `error`: only in case of error (not found is not an error)
 //
 // ### NB: limitations
 //
@@ -122,6 +122,9 @@ func (s3 S3) FindLatestInTimestampPrefixedObjects(delimiter string) (*string, er
 	objectKeys, err := s3.ListObjects(greatestPrefix)
 	if err != nil {
 		return nil, err
+	}
+	if len(objectKeys) == 0 {
+		return nil, nil
 	}
 
 	sort.Strings(objectKeys)
