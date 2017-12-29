@@ -117,7 +117,6 @@ func (s3 S3) FindLatestInTimestampPrefixedObjects(delimiter string) (*string, er
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("greatestPrefix: %s\n", greatestPrefix)
 
 	objectKeys, err := s3.ListObjects(greatestPrefix)
 	if err != nil {
