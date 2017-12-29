@@ -14,28 +14,27 @@ import (
 // S3 is a wrapper around AWS S3 SDK.
 type S3 struct {
 	Bucket string
-	Prefix string
 }
 
 // NewS3 returns a valid S3 struct. Please use it to
-// create a Client and not create it by yourself.
-func NewS3(bucket string, prefix string) S3 {
+// create a `S3 struct` and not create it by yourself.
+func NewS3(bucket string) S3 {
 	return S3{
 		Bucket: bucket,
-		Prefix: prefix,
 	}
 }
 
 // ListObjects list objects stored in the client's S3 bucket with
-// the specified prefix and returns their keys.
-func (s3 S3) ListObjects() ([]string, error) {
+// the specified `prefix` and returns their keys.
+func (s3 S3) ListObjects(prefix string, delimiter string) ([]string, error) {
 	objectKeys := make([]string, 0)
 	sess := session.Must(session.NewSession())
 	awsS3Client := awsS3.New(sess)
 
 	params := &awsS3.ListObjectsInput{
-		Bucket: aws.String(s3.Bucket),
-		Prefix: nil,
+		Bucket:    aws.String(s3.Bucket),
+		Delimiter: aws.String(delimiter),
+		Prefix:    aws.String(prefix),
 	}
 
 	var contents []*awsS3.Object

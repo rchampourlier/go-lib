@@ -14,11 +14,11 @@ import (
 
 func buildS3() golib.S3 {
 	bucket := os.Getenv("AWS_BUCKET")
-	return golib.NewS3(bucket, "")
+	return golib.NewS3(bucket)
 }
 
-func countObjects(s3 golib.S3) (int, error) {
-	objectKeys, err := s3.ListObjects()
+func countObjects(s3 golib.S3, prefix string, delimiter string) (int, error) {
+	objectKeys, err := s3.ListObjects(prefix, delimiter)
 	if err != nil {
 		return -1, err
 	}
@@ -43,10 +43,26 @@ func handleError(err error, t *testing.T) {
 
 func TestListObjectsWithEmptyBucket(t *testing.T) {
 	s3 := buildS3()
-	count, err := countObjects(s3)
+	count, err := countObjects(s3, "", "")
 	handleError(err, t)
 	if count != 0 {
 		t.Errorf("expected bucket to be empty!")
+	}
+}
+
+func TestListObjectsWithPrefix(t *testing.T) {
+	s3 := buildS3()
+	err := createObject(s3)
+	handleError(err, t)
+	count, err := countObjects(s3, "test_", "")
+	handleError(err, t)
+	if count != 1 {
+		t.Errorf("expected to find 1 object matching the `test_` prefix, got %d", count)
+	}
+	count, err = countObjects(s3, "nope", "")
+	handleError(err, t)
+	if count != 0 {
+		t.Errorf("expected to find no objects matching the `none` prefix, got %d", count)
 	}
 }
 
@@ -54,7 +70,7 @@ func TestCreateListAndDelete(t *testing.T) {
 	s3 := buildS3()
 	err := createObject(s3)
 	handleError(err, t)
-	count, err := countObjects(s3)
+	count, err := countObjects(s3, "", "")
 	handleError(err, t)
 	if count != 1 {
 		t.Errorf("expected bucket to contain 1 object, got %d", count)
