@@ -5,6 +5,8 @@ package golib
 import (
 	"bytes"
 	"fmt"
+	"sort"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	awsS3 "github.com/aws/aws-sdk-go/service/s3"
@@ -26,15 +28,14 @@ func NewS3(bucket string) S3 {
 
 // ListObjects list objects stored in the client's S3 bucket with
 // the specified `prefix` and returns their keys.
-func (s3 S3) ListObjects(prefix string, delimiter string) ([]string, error) {
+func (s3 S3) ListObjects(prefix string) ([]string, error) {
 	objectKeys := make([]string, 0)
 	sess := session.Must(session.NewSession())
 	awsS3Client := awsS3.New(sess)
 
 	params := &awsS3.ListObjectsInput{
-		Bucket:    aws.String(s3.Bucket),
-		Delimiter: aws.String(delimiter),
-		Prefix:    aws.String(prefix),
+		Bucket: aws.String(s3.Bucket),
+		Prefix: aws.String(prefix),
 	}
 
 	var contents []*awsS3.Object
@@ -57,6 +58,75 @@ func (s3 S3) ListObjects(prefix string, delimiter string) ([]string, error) {
 		objectKeys = append(objectKeys, *item.Key)
 	}
 	return objectKeys, nil
+}
+
+// FindLatestInTimestampPrefixedObjects will return the key of the latest
+// object by searching the greatest date. For this method to work, objects
+// must be prefixed with a timestamp (e.g. ISO-8601-formatted date strings).
+//
+// If a delimiter is specified (use the `nil` pointer otherwise), the dates
+// will be navigated using the groups defined through the delimiter as specified
+// by AWS  `GET Bucket (List Objects)` API
+// (see https://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGET.html).
+//
+// ### Return values
+//
+//   - `*string`: a pointer to the found key (`nil` if not found)
+//   - `error`
+//
+// ### NB: limitations
+//
+//   - This method does not manage pagination yet, so it will not work for
+//     list of objects with more than 1000 objects (the default AWS page limit).
+//     Using delimiter will help supporting a larger total number of objects, as
+//     each delimited group may contain up to 1000 objects.
+//
+func (s3 S3) FindLatestInTimestampPrefixedObjects(delimiter string) (*string, error) {
+	sess := session.Must(session.NewSession())
+	awsS3Client := awsS3.New(sess)
+
+	params := &awsS3.ListObjectsInput{
+		Bucket:    aws.String(s3.Bucket),
+		Delimiter: aws.String(delimiter),
+	}
+
+	var findGreatestPrefix func(string) (string, error)
+	findGreatestPrefix = func(currentPrefix string) (string, error) {
+		commonPrefixes := make([]string, 0)
+
+		params.Prefix = aws.String(currentPrefix)
+		err := awsS3Client.ListObjectsPages(params,
+			func(page *awsS3.ListObjectsOutput, lastPage bool) bool {
+				for _, item := range page.CommonPrefixes {
+					commonPrefixes = append(commonPrefixes, *item.Prefix)
+				}
+				return !lastPage
+			},
+		)
+		if err != nil {
+			return "", err
+		}
+
+		sort.Strings(commonPrefixes)
+		if len(commonPrefixes) > 0 {
+			return findGreatestPrefix(commonPrefixes[len(commonPrefixes)-1])
+		}
+		return currentPrefix, nil
+	}
+	greatestPrefix, err := findGreatestPrefix("")
+	if err != nil {
+		return nil, err
+	}
+	fmt.Printf("greatestPrefix: %s\n", greatestPrefix)
+
+	objectKeys, err := s3.ListObjects(greatestPrefix)
+	if err != nil {
+		return nil, err
+	}
+
+	sort.Strings(objectKeys)
+	foundKey := objectKeys[len(objectKeys)-1]
+	return &foundKey, nil
 }
 
 // FetchObject fetches the content of the object specified by its key.
