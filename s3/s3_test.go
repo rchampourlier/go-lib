@@ -45,11 +45,14 @@ func deleteObject(key string) error {
 
 func handleError(err error, t *testing.T) {
 	if err != nil {
-		t.Fatalf("%s\n", err.Error())
+		panic(err)
 	}
 }
 
 func TestListObjectsWithEmptyBucket(t *testing.T) {
+	if os.Getenv("RUN_S3_E2E_TESTING") != "true" {
+		return
+	}
 	count, err := countObjects("")
 	handleError(err, t)
 	if count != 0 {
@@ -58,6 +61,9 @@ func TestListObjectsWithEmptyBucket(t *testing.T) {
 }
 
 func TestListObjectsWithPrefix(t *testing.T) {
+	if os.Getenv("RUN_S3_E2E_TESTING") != "true" {
+		return
+	}
 	_, err := createObject()
 	handleError(err, t)
 	count, err := countObjects("test_")
@@ -73,6 +79,9 @@ func TestListObjectsWithPrefix(t *testing.T) {
 }
 
 func TestCreateListAndDelete(t *testing.T) {
+	if os.Getenv("RUN_S3_E2E_TESTING") != "true" {
+		return
+	}
 	key, err := createObject()
 	handleError(err, t)
 	count, err := countObjects("")
@@ -84,6 +93,10 @@ func TestCreateListAndDelete(t *testing.T) {
 }
 
 func TestFindLatestInTimestampPrefixedObjects(t *testing.T) {
+	if os.Getenv("RUN_S3_E2E_TESTING") != "true" {
+		return
+	}
+
 	testObjectKeys := make([]string, 0)
 	type loopParam struct {
 		year  int

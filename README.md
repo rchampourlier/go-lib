@@ -28,3 +28,12 @@ Copy the `.env.example` file and edit it as necessary.
 source .env
 go test
 ```
+
+#### Running S3 end-to-end testing
+
+By default these tests are disabled because they will require access to an active AWS account.
+
+To run them:
+
+- Add the necessary environment variables in `.env` (see `.env.example`)
+- Set `RUN_S3_E2E_TESTING` environment variable to `true`
