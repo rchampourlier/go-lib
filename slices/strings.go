@@ -10,3 +10,17 @@ func StringsContain(slice []string, str string) bool {
 	}
 	return false
 }
+
+// StringsMatch returns true if the two slices contain the same
+// strings, even if they are ordered differently.
+func StringsMatch(s1 []string, s2 []string) bool {
+	if len(s1) != len(s2) {
+		return false
+	}
+	for _, s1Item := range s1 {
+		if !StringsContain(s2, s1Item) {
+			return false
+		}
+	}
+	return true
+}
