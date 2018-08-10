@@ -10,6 +10,7 @@ import (
 // MatchString matches the `expected` and `matched` strings and
 // raise a test error on `t` if they don't match.
 func MatchString(t *testing.T, label, expected, matched string, context interface{}) {
+	t.Helper()
 	if expected != matched {
 		t.Errorf("expected %s to be `%s`, got `%s` (%s)", label, expected, matched, context)
 	}
@@ -18,6 +19,7 @@ func MatchString(t *testing.T, label, expected, matched string, context interfac
 // MatchStringSlices matches the `expected` and `matched` string slices
 // and raise a test error on `t` if they don't.
 func MatchStringSlices(t *testing.T, label string, expected, matched []string, context interface{}) {
+	t.Helper()
 	if !slices.StringsMatch(expected, matched) {
 		t.Errorf("expected %s to be `%s`, got `%s` (%s)", label, expected, matched, context)
 	}
@@ -26,6 +28,7 @@ func MatchStringSlices(t *testing.T, label string, expected, matched []string, c
 // MatchStringPtr matches the string values for the `expected` and `matched` pointers and
 // raise a test error on `t` if they don't match.
 func MatchStringPtr(t *testing.T, label string, expected, matched *string, context interface{}) {
+	t.Helper()
 	if expected == nil && matched == nil {
 		return
 	}
@@ -41,6 +44,7 @@ func MatchStringPtr(t *testing.T, label string, expected, matched *string, conte
 // MatchTime matches the `expected` and `matched` times and
 // raise a test error on `t` if they don't match.
 func MatchTime(t *testing.T, label string, expected, matched time.Time, context interface{}) {
+	t.Helper()
 	if !expected.Equal(matched) {
 		t.Errorf("expected %s to be `%s`, got `%s` (%v)", label, expected, matched, context)
 	}
@@ -49,6 +53,7 @@ func MatchTime(t *testing.T, label string, expected, matched time.Time, context 
 // MatchInt matches the `expected` and `matched` int values and
 // raise a test error on `t` if they don't match.
 func MatchInt(t *testing.T, label string, expected, matched int, context interface{}) {
+	t.Helper()
 	if expected != matched {
 		t.Errorf("expected %s to be `%d`, got `%d` (%v)", label, expected, matched, context)
 	}
