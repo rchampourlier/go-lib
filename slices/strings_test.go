@@ -3,7 +3,7 @@ package slices_test
 import (
 	"testing"
 
-	"github.com/rchampourlier/go-lib/slices"
+	"github.com/rchampourlier/golib/slices"
 )
 
 func TestStringsContain(t *testing.T) {

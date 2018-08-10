@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/rchampourlier/go-lib/slices"
+	"github.com/rchampourlier/golib/slices"
 )
 
 // MatchString matches the `expected` and `matched` strings and
