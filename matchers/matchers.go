@@ -1,6 +1,7 @@
 package matchers
 
 import (
+	"regexp"
 	"testing"
 	"time"
 
@@ -13,6 +14,20 @@ func MatchString(t *testing.T, label, expected, matched string, context interfac
 	t.Helper()
 	if expected != matched {
 		t.Errorf("expected %s to be `%s`, got `%s` (%s)", label, expected, matched, context)
+	}
+}
+
+// MatchStringWithRegex verifies if the `matched` string against
+// the `expected` regexp and raises a test error on `t` if they
+// don't.
+func MatchStringWithRegex(t *testing.T, label, expected, matched string, context interface{}) {
+	t.Helper()
+	result, err := regexp.MatchString(expected, matched)
+	if !result {
+		t.Errorf("expected %s to match `%s`, got `%s` (%s)", label, expected, matched, context)
+	}
+	if err != nil {
+		t.Fatal(err)
 	}
 }
 
