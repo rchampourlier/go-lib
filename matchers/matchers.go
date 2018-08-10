@@ -50,6 +50,21 @@ func MatchTime(t *testing.T, label string, expected, matched time.Time, context 
 	}
 }
 
+// MatchTimeApprox matches the `expected` and `matched` times and
+// raise a test error on `t` if they don't match. The match is
+// performed approximately, allowing a difference of `tolerance`
+// milliseconds.
+func MatchTimeApprox(t *testing.T, label string, expected, matched time.Time, tolerance int, context interface{}) {
+	t.Helper()
+	diff := expected.Sub(matched).Nanoseconds() / 1000000
+	if diff < 0 {
+		diff = -diff
+	}
+	if diff > int64(tolerance) {
+		t.Errorf("expected %s to be `%s` +/- %d ms, got `%s` (%v)", label, expected, tolerance, matched, context)
+	}
+}
+
 // MatchInt matches the `expected` and `matched` int values and
 // raise a test error on `t` if they don't match.
 func MatchInt(t *testing.T, label string, expected, matched int, context interface{}) {
