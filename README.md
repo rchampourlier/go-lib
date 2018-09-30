@@ -25,8 +25,7 @@ Copy the `.env.example` file and edit it as necessary.
 ### Run tests
 
 ```
-source .env
-go test
+go test -v ./<package>
 ```
 
 #### Running S3 end-to-end testing
