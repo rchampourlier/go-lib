@@ -6,6 +6,46 @@ import (
 	"github.com/rchampourlier/golib/slices"
 )
 
+func TestStringsIntersect(t *testing.T) {
+	type testCase struct {
+		slice1 []string
+		slice2 []string
+		result []string
+	}
+	testCases := []testCase{
+		testCase{[]string{"a", "b"}, []string{"b", "c"}, []string{"b"}},
+		testCase{[]string{}, []string{"a", "b"}, []string{}},
+		testCase{[]string{"a"}, []string{"b"}, []string{}},
+		testCase{[]string{"a"}, []string{}, []string{}},
+	}
+	for _, tc := range testCases {
+		r := slices.StringsIntersect(tc.slice1, tc.slice2)
+		if !slices.StringsMatch(r, tc.result) {
+			t.Errorf("expected to return `%v` (got `%v`, for StringsIntersect(`%v`, `%v`))", tc.result, r, tc.slice1, tc.slice2)
+		}
+	}
+}
+
+func TestStringsSubstract(t *testing.T) {
+	type testCase struct {
+		slice1 []string
+		slice2 []string
+		result []string
+	}
+	testCases := []testCase{
+		testCase{[]string{"a", "b"}, []string{"b", "c"}, []string{"a"}},
+		testCase{[]string{}, []string{"a", "b"}, []string{}},
+		testCase{[]string{"a"}, []string{"b"}, []string{"a"}},
+		testCase{[]string{"a"}, []string{}, []string{"a"}},
+	}
+	for _, tc := range testCases {
+		r := slices.StringsSubstract(tc.slice1, tc.slice2)
+		if !slices.StringsMatch(r, tc.result) {
+			t.Errorf("expected to return `%v` (got `%v`, for StringsSubstract(`%v`, `%v`))", tc.result, r, tc.slice1, tc.slice2)
+		}
+	}
+}
+
 func TestStringsContain(t *testing.T) {
 	trueCases := map[string][]string{
 		"in": {"in", "other"},

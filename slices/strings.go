@@ -1,5 +1,29 @@
 package slices
 
+// StringsIntersect returns the intersection of the 2 specificed
+// slices.
+func StringsIntersect(slice1 []string, slice2 []string) []string {
+	r := make([]string, 0)
+	for _, str := range slice1 {
+		if StringsContain(slice2, str) {
+			r = append(r, str)
+		}
+	}
+	return r
+}
+
+// StringsSubstract returns the slice made with items from slice1
+// without items from slice2.
+func StringsSubstract(slice1 []string, slice2 []string) []string {
+	r := make([]string, 0)
+	for _, str := range slice1 {
+		if !StringsContain(slice2, str) {
+			r = append(r, str)
+		}
+	}
+	return r
+}
+
 // StringsContain returns true if the specified slice of strings
 // contain `str`.
 func StringsContain(slice []string, str string) bool {
