@@ -1,10 +1,29 @@
-package snippets
-
-import (
-	"fmt"
-	"testing"
-)
-
+# A valid snippet should starts with:
+#
+#		snippet trigger_word [ "description" [ options ] ]
+#
+# and end with:
+#
+#		endsnippet
+#
+# Snippet options:
+#
+#		b - Beginning of line.
+#		i - In-word expansion.
+#		w - Word boundary.
+#		r - Regular expression
+#		e - Custom context snippet
+#		A - Snippet will be triggered automatically, when condition matches.
+#
+# Basic example:
+#
+#		snippet emitter "emitter properties" b
+#		private readonly ${1} = new Emitter<$2>()
+#		public readonly ${1/^_(.*)/$1/}: Event<$2> = this.$1.event
+#		endsnippet
+#
+# Online reference: https://github.com/SirVer/ultisnips/blob/master/doc/UltiSnips.txt
+snippet mock "mock struct"
 // MockX is the base struct to build a Mock.
 //
 // This pattern for mocking is inspired from
@@ -15,14 +34,14 @@ type MockX struct {
 }
 
 // Expectation is a specific interface for structs representing
-// expectations for the mock. They implement a `Describe` method
+// expectations for the mock. They implement a \`Describe\` method
 // that can be used by the mock to display when there is a
 // mismatch between the expected call and the call it received.
 type Expectation interface {
 	Describe() string
 }
 
-// NewMockX returns a new `MockX` with a default
+// NewMockX returns a new \`MockX\` with a default
 // behaviour.
 func NewMockX(t *testing.T) *MockX {
 	return &MockX{T: t}
@@ -32,11 +51,11 @@ func NewMockX(t *testing.T) *MockX {
 func (m *MockX) SomeMethod() interface{} {
 	e := m.popExpectation()
 	if e == nil {
-		m.Errorf("mock received `SomeMethod` but no expectation was set")
+		m.Errorf("mock received \`SomeMethod\` but no expectation was set")
 	}
 	ee, ok := e.(*ExpectedSomeMethod)
 	if !ok {
-		m.Errorf("momk received `SomeMethod` but was expecting `%s`\n", e.Describe())
+		m.Errorf("momk received \`SomeMethod\` but was expecting \`%s\`\n", e.Describe())
 	}
 	// Implement the necessary mocking
 	return ee.value
@@ -49,10 +68,10 @@ func (m *MockX) SomeMethod() interface{} {
 // SomeMethod
 // ----------
 
-// ExpectedSomeMethod is an expectation for `SomeMethod`
+// ExpectedSomeMethod is an expectation for \`SomeMethod\`
 //
-// Use `With...` and `Will...` methods on the returned
-// `ExpectedReplaceIssueStateAndEvents` expectation to
+// Use \`With...\` and \`Will...\` methods on the returned
+// \`ExpectedReplaceIssueStateAndEvents\` expectation to
 // specify expected arguments and return value.
 type ExpectedSomeMethod struct {
 	value interface{}
@@ -61,19 +80,19 @@ type ExpectedSomeMethod struct {
 }
 
 // ExpectSomeMethod indicates the mock should expect a call to
-// `SomeMethod` with the specified arguments.
+// \`SomeMethod\` with the specified arguments.
 func (m *MockX) ExpectSomeMethod() *ExpectedSomeMethod {
 	e := ExpectedSomeMethod{}
 	m.expectations = append(m.expectations, &e)
 	return &e
 }
 
-// Describe describes the `SomeMethod` expectation
+// Describe describes the \`SomeMethod\` expectation
 func (e *ExpectedSomeMethod) Describe() string {
 	return fmt.Sprintf("SomeMethod with args...")
 }
 
-// WillRespondWithY indicates `ExpectedSomeMethod`
+// WillRespondWithY indicates \`ExpectedSomeMethod\`
 // expectation should return the specified value when
 // called.
 func (e *ExpectedSomeMethod) WillRespondWithY(y interface{}) {
@@ -91,3 +110,4 @@ func (m *MockX) popExpectation() Expectation {
 	m.expectations = m.expectations[1:]
 	return e
 }
+endsnippet
