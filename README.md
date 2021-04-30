@@ -25,7 +25,7 @@ Copy the `.env.example` file and edit it as necessary.
 ### Run tests
 
 ```
-go test -v ./<package>
+make test
 ```
 
 #### Running S3 end-to-end testing
