@@ -23,6 +23,15 @@
 #		endsnippet
 #
 # Online reference: https://github.com/SirVer/ultisnips/blob/master/doc/UltiSnips.txt
+snippet fileLogger "New logger to a file"
+f, err := os.Create("./log.txt")
+if err != nil {
+	panic(err)
+}
+logger := log.New(f, "", 0)
+logger.Println("message")
+endsnippet
+
 snippet mock "mock struct"
 // MockX is the base struct to build a Mock.
 //
@@ -31,6 +40,7 @@ snippet mock "mock struct"
 type MockX struct {
 	*testing.T
 	expectations []Expectation
+	mutex        sync.Mutex
 }
 
 // Expectation is a specific interface for structs representing
@@ -44,7 +54,10 @@ type Expectation interface {
 // NewMockX returns a new \`MockX\` with a default
 // behaviour.
 func NewMockX(t *testing.T) *MockX {
-	return &MockX{T: t}
+	return &MockX{
+		T: t,
+		mutex: sync.Mutex{},
+	}
 }
 
 // SomeMethod implements the method's mock.
@@ -55,7 +68,7 @@ func (m *MockX) SomeMethod() interface{} {
 	}
 	ee, ok := e.(*ExpectedSomeMethod)
 	if !ok {
-		m.Errorf("momk received \`SomeMethod\` but was expecting \`%s\`\n", e.Describe())
+		m.Errorf("mock received \`SomeMethod\` but was expecting \`%s\`\n", e.Describe())
 	}
 	// Implement the necessary mocking
 	return ee.value
@@ -71,7 +84,7 @@ func (m *MockX) SomeMethod() interface{} {
 // ExpectedSomeMethod is an expectation for \`SomeMethod\`
 //
 // Use \`With...\` and \`Will...\` methods on the returned
-// \`ExpectedReplaceIssueStateAndEvents\` expectation to
+// \`ExpectedSomeMethod\` expectation to
 // specify expected arguments and return value.
 type ExpectedSomeMethod struct {
 	value interface{}
@@ -103,6 +116,8 @@ func (e *ExpectedSomeMethod) WillRespondWithY(y interface{}) {
 // -----
 
 func (m *MockX) popExpectation() Expectation {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
 	if len(m.expectations) == 0 {
 		return nil
 	}
