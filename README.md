@@ -4,6 +4,10 @@ A mini Go library for personal use.
 
 ## Components
 
+### csv
+
+Parses CSV files.
+
 ### parameterize
 
 Converts a string to snake-case.
